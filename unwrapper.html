@@ -1,0 +1,93 @@
+<html>
+<head>
+   <title>Easter Egg Unwrapper</title>
+</head>
+<body>
+   <h1>Easter Egg Unwrapper</h1>
+   <p>
+      Welcome: this webpage will 'unwrap' your easter eggs for you
+      to get to the chocolate inside. Fill out the form below
+      (i.e. place your easter eggs into the basket) and leave 'Encode' unchecked.
+   </p>
+
+   <h2>Basket:</h2>
+   <form id="basket">
+      Encoded Text: <input type="text" name="ciphertext"><br/>
+      Key 1: <input type="number" name="key1" min="0" max="1023"><br/>
+      Key 2: <input type="number" name="key2" min="0" max="1023"><br/>
+      Key 3: <input type="number" name="key3" min="0" max="1023"><br/>
+      Key 4: <input type="number" name="key4" min="0" max="1023"><br/>
+      Key 5: <input type="number" name="key5" min="0" max="1023"><br/>
+      Encode: <input type="checkbox" name="encode"><br/>
+      <input type="button" onclick="unwrap()" value="Go!!!">
+   </form>
+
+   <h2>Result:</h2>
+   <textarea id="plaintext" rows=25 cols=120 value=""></textarea>
+
+<script>
+   function unwrap() {
+      var basket = document.getElementById("basket");
+      var ciphertext = basket.elements["ciphertext"].value;
+      var key1 = basket.elements["key1"].value;
+      var key2 = basket.elements["key2"].value;
+      var key3 = basket.elements["key3"].value;
+      var key4 = basket.elements["key4"].value;
+      var key5 = basket.elements["key5"].value;
+      var currChar;
+      var cipherOffset;
+      var offsetChar;
+      var encodeStatus = basket.elements["encode"].checked;
+      var plaintext = "";
+      var ctIdx = 0;
+      var keyIdx = 0; // Range 0 to 4
+
+      // Code to encode or decode
+      // In order to encode (or decode), ¿ indicates newline, ‽ EOF
+      // Once decoded by this function, ¿ and ‽ will be removed
+      while (ctIdx < ciphertext.length) {
+         currChar = ciphertext[ctIdx];
+         if (currChar == '~') {
+            if (encodeStatus == false) {
+               plaintext = plaintext.concat('\n'.toString());
+            } else {
+               plaintext = plaintext.concat("~");
+            }
+         } else if (currChar.charCodeAt() >= ' '.charCodeAt()
+                     && currChar.charCodeAt() <= '}'.charCodeAt()) {
+            switch (keyIdx) {
+               case 0: cipherOffset = parseInt(key1); break;
+               case 1: cipherOffset = parseInt(key2); break;
+               case 2: cipherOffset = parseInt(key3); break;
+               case 3: cipherOffset = parseInt(key4); break;
+               case 4: cipherOffset = parseInt(key5); break;
+            }
+
+            if (encodeStatus == false) {
+               offsetChar = String.fromCharCode((((currChar.charCodeAt() - ' '.charCodeAt())
+               + cipherOffset)
+               % ('}'.charCodeAt() - ' '.charCodeAt() + 1))
+               + ' '.charCodeAt());
+            } else {
+               offsetChar = (currChar.charCodeAt() - ' '.charCodeAt())
+                  - cipherOffset;
+               while (!(offsetChar >= 0
+                     && offsetChar < ('}'.charCodeAt() - ' '.charCodeAt() + 1))) {
+                  offsetChar += '}'.charCodeAt() - ' '.charCodeAt() + 1;
+               }
+               offsetChar = String.fromCharCode(offsetChar + ' '.charCodeAt());
+            }
+
+            plaintext = plaintext.concat(offsetChar.toString());
+            keyIdx = (keyIdx + 1) % 5;
+         }
+
+         ctIdx++;
+      }
+
+      document.getElementById("plaintext").value = plaintext;
+   }
+</script>
+
+</body>
+<html>
