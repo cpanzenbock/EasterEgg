@@ -14,4 +14,4 @@ Key4 - This one’s got to do with something about me, that might be documented 
 
 Key5 - Take a look at IMDB to discover what the 8th most popular move of 2011 was.
 
-Encoded Egg i mean text - Have you checked your tumblr recently?
+Encoded Egg i mean text - Have you checked my tumblr recently?
